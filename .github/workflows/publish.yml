@@ -1,0 +1,33 @@
+name: dotnet publish binaries
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  publish:
+    strategy:
+      matrix:
+        os: [linux, win, osx]
+
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - run: dotnet restore
+      - run: dotnet publish --os ${{ matrix.os }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uextract
+          path: ./bin/Release/net8.0/${{ matrix.os }}-x64/publish/
