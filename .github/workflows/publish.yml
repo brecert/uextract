@@ -6,10 +6,6 @@ on:
 
 jobs:
   publish:
-    strategy:
-      matrix:
-        os: [linux, win, osx]
-
     runs-on: windows-latest
 
     steps:
@@ -24,10 +20,24 @@ jobs:
           dotnet-version: 8.0.x
 
       - run: dotnet restore
-      - run: dotnet publish --os ${{ matrix.os }}
+      - run: dotnet publish --os win
+      - run: dotnet publish --os osx
+      - run: dotnet publish --os linux
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: uextract
-          path: ./bin/Release/net8.0/${{ matrix.os }}-x64/publish/
+          name: uextract-win
+          path: ./bin/Release/net8.0/win-x64/publish/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uextract-osx
+          path: ./bin/Release/net8.0/osx-x64/publish/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uextract-linux
+          path: ./bin/Release/net8.0/linux-x64/publish/
